@@ -19,7 +19,14 @@ var countTo = angular.module('countTo', [])
                     steps = Math.ceil(duration / refreshInterval);
                     increment = ((countTo - scope.value) / steps);
                     num = scope.value;
-                }
+                };
+
+                var commaSeparateNumber = function(val){
+                    while (/(\d+)(\d{3})/.test(val.toString())){
+                        val = val.toString().replace(/(\d+)(\d{3})/, '$1'+','+'$2');
+                    }
+                    return val;
+                };
 
                 var tick = function () {
                     scope.timoutId = $timeout(function () {
@@ -28,22 +35,24 @@ var countTo = angular.module('countTo', [])
                         if (step >= steps) {
                             $timeout.cancel(scope.timoutId);
                             num = countTo;
-                            e.textContent = countTo;
+                            e.innerText = commaSeparateNumber(countTo);
                         } else {
-                            e.textContent = Math.round(num);
+                            e.innerText = commaSeparateNumber(Math.round(num));
                             tick();
                         }
                     }, refreshInterval);
 
-                }
+                };
 
                 var start = function () {
+                    console.log('start');
                     if (scope.timoutId) {
+                        console.log('cancel');
                         $timeout.cancel(scope.timoutId);
                     }
                     calculate();
                     tick();
-                }
+                };
 
                 attrs.$observe('countTo', function (val) {
                     if (val) {
